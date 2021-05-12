@@ -1,0 +1,86 @@
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useHistory } from "react-router";
+import { confirmcode } from "../store/actions/AuthAction";
+
+const ConfirmSignUp = ({ handleConfirmCode, auth: { isAuthenticated } }) => {
+  const history = useHistory();
+
+  const [code, setCode] = useState("");
+  const [fieldsError, setFieldsError] = useState({
+    code: "",
+  });
+
+  const onInputChange = (e) => {
+    setCode(e.target.value);
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    let fieldsError = {};
+
+    if (code === "" || code.length !== 6) {
+      fieldsError.username = "Please enter valid 6 digit confirmation code";
+      isValid = false;
+    }
+
+    if (!isValid) {
+      setFieldsError(fieldsError);
+    }
+    return isValid;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      const username = JSON.parse(localStorage.getItem("user_signing_up"));
+      const data = { username, code };
+
+      handleConfirmCode(data);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.removeItem("user_signing_up");
+      history.push("./");
+    }
+  }, [isAuthenticated]);
+
+  return (
+    <div className="row mt-4 container">
+      <div className="col-sm-2 col-md-3"></div>
+      <div className="col-sm-8 col-md-6">
+        <h4>Check your Email</h4>
+        <p>We have sent a six digit confirmation code</p>
+        <div className="mt-3">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              id="code"
+              className="form-control"
+              value={code}
+              onChange={onInputChange}
+              placeholder="Enter Confirmation Code"
+            />
+          </form>
+        </div>
+      </div>
+      <div className="col-sm-2 col-md-3"></div>
+    </div>
+  );
+};
+
+const mapStateToProps = ({ auth }) => {
+  return {
+    auth,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleConfirmCode: (data) => confirmcode(data, dispatch),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ConfirmSignUp);
