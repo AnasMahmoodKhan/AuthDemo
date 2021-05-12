@@ -29,6 +29,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload,
+        isAuthenticated: true,
       };
     case LOGIN_FAILURE:
       return {
@@ -38,7 +39,6 @@ const authReducer = (state = initialState, action) => {
     case CONFIRM_CODE_SUCCESS:
       return {
         ...state,
-        user: action.payload,
         isAuthenticated: true,
       };
     case CONFIRM_CODE_FAILURE:

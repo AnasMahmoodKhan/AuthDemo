@@ -3,8 +3,11 @@ import { connect } from "react-redux";
 
 import _ from "lodash";
 import { login } from "../store/actions/AuthAction";
+import { useHistory } from "react-router";
 
-const SignIn = ({ handleLogin, auth: { isAuthenticated } }) => {
+const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
+  const history = useHistory();
+
   const [fields, setFields] = useState({
     username: "",
     password: "",
@@ -44,17 +47,16 @@ const SignIn = ({ handleLogin, auth: { isAuthenticated } }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log(fields);
       handleLogin(fields);
     }
   };
 
-  //   useEffect(() => {
-  //     if (!_.isEmpty(user)) {
-  //       localStorage.setItem("user_signing_up", JSON.stringify(user.username));
-  //       console.log(user);
-  //     }
-  //   }, [user]);
+  useEffect(() => {
+    if (!_.isEmpty(user) && isAuthenticated) {
+      localStorage.setItem("user_logged_in", JSON.stringify(user.username));
+      history.push("/");
+    }
+  }, [user]);
 
   return (
     <section className="mt-4">
