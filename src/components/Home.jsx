@@ -1,8 +1,14 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-
+import Dashboard from "./Dashboard";
 const Home = () => {
-  return (
+  const state = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = state;
+
+  return isAuthenticated ? (
+    <Dashboard username={user.username} />
+  ) : (
     <div className="jumbotron container mt-4">
       <h1 className="display-3">AWS Amplify Demo</h1>
       <p className="lead">

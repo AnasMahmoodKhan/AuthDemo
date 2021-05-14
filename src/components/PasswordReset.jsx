@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { signup } from "../store/actions/AuthAction";
+
 import { useHistory } from "react-router-dom";
+import { changePassword } from "../store/actions/AuthAction";
 
-import _ from "lodash";
-
-const SignUp = () => {
+const PasswordReset = () => {
   const history = useHistory();
+
   const state = useSelector((state) => state.auth);
-  const { user, error } = state;
+  const { error, username_for_password_change } = state;
   const dispatch = useDispatch();
 
   const [fields, setFields] = useState({
-    username: "",
-    email: "",
+    code: "",
     password: "",
     confirmpassword: "",
   });
   const [fieldsError, setFieldsError] = useState({
-    username: "",
-    email: "",
+    code: "",
     password: "",
     confirmpassword: "",
   });
@@ -33,27 +31,25 @@ const SignUp = () => {
 
   const validateForm = () => {
     let isValid = true;
-    let fieldsError = {};
-    if (fields.username === "") {
-      fieldsError.username = "Please enter valid Username";
+    let fieldsError = { code: "", password: "", confirmpassword: "" };
+
+    if (fields.code === "" || fields.code.length !== 6) {
+      fieldsError.code = "Please enter valid 6 digit verification code";
       isValid = false;
     }
 
-    if (fields.email === "") {
-      fieldsError.email = "Please enter valid Email";
+    let reg = new RegExp(
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$"
+    );
+    if (reg.test(fields.password) || fields.password === "") {
+      fieldsError.password = "Enter a valid password";
       isValid = false;
     }
-
-    if (fields.password === "") {
-      fieldsError.password = "Please enter valid Password";
-      isValid = false;
-    }
-
     if (
-      fields.confirmpassword !== fields.password ||
+      fields.password !== fields.confirmpassword ||
       fields.confirmpassword === ""
     ) {
-      fieldsError.confirmpassword = "Password do not match";
+      fieldsError.confirmpassword = "Entered password do not match.";
       isValid = false;
     }
     setFieldsError(fieldsError);
@@ -63,63 +59,51 @@ const SignUp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      dispatch(signup(fields));
+      const data = {
+        username: username_for_password_change,
+        code: fields.code,
+        new_password: fields.password,
+      };
+      dispatch(changePassword(data));
+      if (username_for_password_change === "") {
+        history.push("./signin");
+      }
     }
   };
 
-  useEffect(() => {
-    if (!_.isEmpty(user)) {
-      localStorage.setItem("user_signing_up", JSON.stringify(user.username));
-      history.push("./confirmsignup");
-    }
-  }, [history, user]);
-
   return (
-    <section>
-      <div className="row">
+    <section className="mt-4">
+      <div className="row mt-4">
         <div className="col-sm-2 col-md-3" />
         <div className="col-sm-8 col-md-6">
           <div className="container">
-            <h1>Sign Up</h1>
-            {error ? (
+            <h1>Change Password</h1>
+
+            {error && (
               <small className="text-danger ml-2">{error.message}</small>
-            ) : null}
+            )}
             <form onSubmit={handleSubmit}>
               <input
                 className={`form-control m-2 ${
-                  fieldsError.username ? "is-invalid" : ""
+                  fieldsError.code ? "is-invalid" : ""
                 }`}
                 type="text"
-                id="username"
-                placeholder="Enter username"
-                value={fields.username}
+                id="code"
+                placeholder="Enter verification code"
+                value={fields.code}
                 onChange={onInputChange}
               />
-              {fieldsError.username && (
-                <div className="invalid-feedback ml-2">
-                  {fieldsError.username}
-                </div>
+              {fieldsError.code && (
+                <div className="invalid-feedback ml-2">{fieldsError.code}</div>
               )}
-              <input
-                className={`form-control m-2 ${
-                  fieldsError.email ? "is-invalid" : ""
-                }`}
-                type="email"
-                id="email"
-                placeholder="Enter email"
-                value={fields.email}
-                onChange={onInputChange}
-              />
-              {fieldsError.email && (
-                <div className="invalid-feedback ml-2">{fieldsError.email}</div>
-              )}
+
               <input
                 className={`form-control m-2 ${
                   fieldsError.password ? "is-invalid" : ""
                 }`}
-                type="password"
+                type="text"
                 id="password"
-                placeholder="Password"
+                placeholder="Enter new password"
                 value={fields.password}
                 onChange={onInputChange}
               />
@@ -128,13 +112,14 @@ const SignUp = () => {
                   {fieldsError.password}
                 </div>
               )}
+
               <input
                 className={`form-control m-2 ${
                   fieldsError.confirmpassword ? "is-invalid" : ""
                 }`}
-                type="password"
+                type="text"
                 id="confirmpassword"
-                placeholder="Confirm password"
+                placeholder="Confirm Password"
                 value={fields.confirmpassword}
                 onChange={onInputChange}
               />
@@ -144,7 +129,9 @@ const SignUp = () => {
                 </div>
               )}
 
-              <button className="btn btn-success btn-sm m-2">Sign Up</button>
+              <button className="btn btn-primary btn-sm m-2">
+                Confirm Changes
+              </button>
             </form>
           </div>
         </div>
@@ -154,4 +141,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default PasswordReset;

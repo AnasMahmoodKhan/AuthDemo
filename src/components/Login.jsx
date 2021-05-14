@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import _ from "lodash";
 import { login } from "../store/actions/AuthAction";
-import { useHistory } from "react-router";
+import { Link, useHistory } from "react-router-dom";
 
-const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
+const SignIn = () => {
   const history = useHistory();
 
   const [fields, setFields] = useState({
@@ -17,6 +17,10 @@ const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
     password: "",
   });
 
+  const state = useSelector((state) => state.auth);
+  const { isAuthenticated, user, error } = state;
+  const dispatch = useDispatch();
+
   const onInputChange = ({ target: { id, value } }) => {
     setFields({
       ...fields,
@@ -26,7 +30,7 @@ const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
 
   const validateForm = () => {
     let isValid = true;
-    let fieldsError = {};
+    let fieldsError = { username: "", password: "" };
 
     if (fields.username === "") {
       fieldsError.username = "Please enter valid username";
@@ -38,16 +42,14 @@ const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
       isValid = false;
     }
 
-    if (!isValid) {
-      setFieldsError(fieldsError);
-    }
+    setFieldsError(fieldsError);
     return isValid;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      handleLogin(fields);
+      dispatch(login(fields));
     }
   };
 
@@ -56,7 +58,7 @@ const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
       localStorage.setItem("user_logged_in", JSON.stringify(user.username));
       history.push("/");
     }
-  }, [user]);
+  }, [history, isAuthenticated, user]);
 
   return (
     <section className="mt-4">
@@ -66,22 +68,42 @@ const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
           <div className="container">
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
+              {error ? (
+                <small className="text-danger ml-2">{error.message}</small>
+              ) : null}
               <input
-                className="form-control m-2"
+                className={`form-control m-2 ${
+                  fieldsError.username ? "is-invalid" : ""
+                }`}
                 type="text"
                 id="username"
                 placeholder="Enter username"
                 value={fields.username}
                 onChange={onInputChange}
               />
+              {fieldsError.username && (
+                <div className="invalid-feedback ml-2">
+                  {fieldsError.username}
+                </div>
+              )}
               <input
-                className="form-control m-2"
+                className={`form-control m-2 ${
+                  fieldsError.password ? "is-invalid" : ""
+                }`}
                 type="password"
                 id="password"
                 placeholder="Password"
                 value={fields.password}
                 onChange={onInputChange}
               />
+              {fieldsError.password && (
+                <div className="invalid-feedback ml-2">
+                  {fieldsError.password}
+                </div>
+              )}
+              <div className="text-right">
+                <Link to="/forgotpassword">Forgot Password?</Link>
+              </div>
               <button className="btn btn-success btn-sm m-2">Login</button>
             </form>
           </div>
@@ -92,16 +114,4 @@ const SignIn = ({ handleLogin, auth: { isAuthenticated, user } }) => {
   );
 };
 
-const mapStateToProps = ({ auth }) => {
-  return {
-    auth,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleLogin: (data) => login(data, dispatch),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
+export default SignIn;

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { confirmcode } from "../store/actions/AuthAction";
 
-const ConfirmSignUp = ({ handleConfirmCode, auth: { isAuthenticated } }) => {
+const ConfirmSignUp = () => {
   const history = useHistory();
+  const state = useSelector((state) => state.auth);
+  const { isAuthenticated, error } = state;
+  const dispatch = useDispatch();
 
   const [code, setCode] = useState("");
   const [fieldsError, setFieldsError] = useState({
@@ -36,7 +39,7 @@ const ConfirmSignUp = ({ handleConfirmCode, auth: { isAuthenticated } }) => {
       const username = JSON.parse(localStorage.getItem("user_signing_up"));
       const data = { username, code };
 
-      handleConfirmCode(data);
+      dispatch(confirmcode(data));
     }
   };
 
@@ -45,7 +48,7 @@ const ConfirmSignUp = ({ handleConfirmCode, auth: { isAuthenticated } }) => {
       localStorage.removeItem("user_signing_up");
       history.push("./");
     }
-  }, [isAuthenticated]);
+  }, [history, isAuthenticated]);
 
   return (
     <div className="row mt-4 container">
@@ -53,6 +56,9 @@ const ConfirmSignUp = ({ handleConfirmCode, auth: { isAuthenticated } }) => {
       <div className="col-sm-8 col-md-6">
         <h4>Check your Email</h4>
         <p>We have sent a six digit confirmation code</p>
+        {error ? (
+          <small className="text-danger ml-2">{error.message}</small>
+        ) : null}
         <div className="mt-3">
           <form onSubmit={handleSubmit}>
             <input
@@ -63,6 +69,10 @@ const ConfirmSignUp = ({ handleConfirmCode, auth: { isAuthenticated } }) => {
               onChange={onInputChange}
               placeholder="Enter Confirmation Code"
             />
+
+            {fieldsError.code && (
+              <div className="invalid-feedback ml-2">{fieldsError.code}</div>
+            )}
           </form>
         </div>
       </div>
@@ -71,16 +81,4 @@ const ConfirmSignUp = ({ handleConfirmCode, auth: { isAuthenticated } }) => {
   );
 };
 
-const mapStateToProps = ({ auth }) => {
-  return {
-    auth,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleConfirmCode: (data) => confirmcode(data, dispatch),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ConfirmSignUp);
+export default ConfirmSignUp;

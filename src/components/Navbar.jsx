@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import _ from "lodash";
+import React, { useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { check_authenticated_user, signout } from "../store/actions/AuthAction";
 
 const Navbar = () => {
-  const [loggedIn, setloggedIn] = useState(false);
+  const history = useHistory();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user_logged_in"));
-    if (!_.isEmpty(user)) {
-      setloggedIn(true);
-    }
-  }, []);
+    dispatch(check_authenticated_user);
+  }, [dispatch]);
+
+  const handleSignOut = (e) => {
+    dispatch(signout);
+    history.push("./signin");
+  };
 
   return (
     <nav className="navbar navbar-expand-lg p-2 navbar-dark bg-dark">
@@ -29,7 +34,7 @@ const Navbar = () => {
         <span className="navbar-toggler-icon"></span>
       </button>
       <div className="collapse navbar-collapse" id="navbarNav">
-        {!loggedIn ? (
+        {!isAuthenticated ? (
           <ul className="navbar-nav">
             <li className="nav-item">
               <Link className="nav-link" to="/signin">
@@ -42,14 +47,13 @@ const Navbar = () => {
               </Link>
             </li>
           </ul>
-        ):(
+        ) : (
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className="nav-link" to="/signout">
+              <span className="nav-link" onClick={handleSignOut}>
                 Signout
-              </Link>
+              </span>
             </li>
-            
           </ul>
         )}
       </div>
