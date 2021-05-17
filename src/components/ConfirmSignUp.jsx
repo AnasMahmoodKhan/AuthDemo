@@ -46,7 +46,7 @@ const ConfirmSignUp = () => {
   useEffect(() => {
     if (isAuthenticated) {
       localStorage.removeItem("user_signing_up");
-      history.push("./");
+      history.push("./signin");
     }
   }, [history, isAuthenticated]);
 
@@ -73,6 +73,7 @@ const ConfirmSignUp = () => {
             {fieldsError.code && (
               <div className="invalid-feedback ml-2">{fieldsError.code}</div>
             )}
+            <button className="btn btn-primary btn-sm m-2">Confirm</button>
           </form>
         </div>
       </div>

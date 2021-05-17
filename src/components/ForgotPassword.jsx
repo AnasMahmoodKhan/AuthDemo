@@ -77,9 +77,7 @@ const ForgotPassword = () => {
                 </div>
               )}
 
-              <button className="btn btn-primary btn-sm m-2">
-                Confirm Username
-              </button>
+              <button className="btn btn-primary btn-sm m-2">Confirm</button>
             </form>
           </div>
         </div>

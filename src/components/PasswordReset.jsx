@@ -38,10 +38,10 @@ const PasswordReset = () => {
       isValid = false;
     }
 
-    let reg = new RegExp(
-      "^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$"
-    );
-    if (reg.test(fields.password) || fields.password === "") {
+    // let reg = new RegExp(
+    //   "^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$"
+    // );
+    if ( fields.password === "") {
       fieldsError.password = "Enter a valid password";
       isValid = false;
     }
