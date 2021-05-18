@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useHistory } from "react-router-dom";
+import SpinnerLoading from "../helpers/Spinner";
 import { changePassword } from "../store/actions/AuthAction";
 
 const PasswordReset = () => {
   const history = useHistory();
 
   const state = useSelector((state) => state.auth);
-  const { error, username_for_password_change } = state;
+  const { error, username_for_password_change, isLoading } = state;
   const dispatch = useDispatch();
 
   const [fields, setFields] = useState({
@@ -41,7 +42,7 @@ const PasswordReset = () => {
     // let reg = new RegExp(
     //   "^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$"
     // );
-    if ( fields.password === "") {
+    if (fields.password === "") {
       fieldsError.password = "Enter a valid password";
       isValid = false;
     }
@@ -78,6 +79,7 @@ const PasswordReset = () => {
         <div className="col-sm-8 col-md-6">
           <div className="container">
             <h1>Change Password</h1>
+            {isLoading && <SpinnerLoading />}
 
             {error && (
               <small className="text-danger ml-2">{error.message}</small>

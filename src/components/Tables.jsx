@@ -1,20 +1,21 @@
-import React from "react";
-import { Line, Pie } from "react-chartjs-2";
-import { data, options, optionsPie, dataPie } from "../helpers/chartData";
-import ProductsContainer from "../helpers/ProductsContainer";
+import React, { useState } from "react";
+import { MDBDataTableV5 } from "mdbreact";
 import SideNav from "./SideNav";
-const Dashboard = () => {
+import { data_Table } from "../helpers/TableDataReport";
+
+const Tables = () => {
+  const [datatable, setDatatable] = useState(data_Table);
   return (
     <>
       <SideNav />
       <div className="container-fluid">
         <div className="row">
           <main
-            id="dashboard_nav"
+            id="reports"
             className="col-md-9 ml-sm-auto col-lg-10 px-md-4 border-left"
           >
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-              <h1 className="h2">Dashboard</h1>
+              <h1 className="h2">Users Visit</h1>
               <div className="btn-toolbar mb-2 mb-md-0">
                 <div className="btn-group mr-2">
                   <button
@@ -62,26 +63,20 @@ const Dashboard = () => {
                 </button>
               </div>
             </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Line data={data} width={450} height={350} options={options} />
-              </div>
-              <br />
-              <div className="col-md-6 ">
-                <Pie
-                  data={dataPie}
-                  width={450}
-                  height={350}
-                  options={optionsPie}
-                />
-              </div>
-            </div>
+
+            <MDBDataTableV5
+              hover
+              entriesOptions={[10, 20, 25]}
+              entries={10}
+              pagesAmount={4}
+              data={datatable}
+              materialSearch
+            />
           </main>
-          <ProductsContainer />
         </div>
       </div>
     </>
   );
 };
 
-export default Dashboard;
+export default Tables;

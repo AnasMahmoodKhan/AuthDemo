@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import { login } from "../store/actions/AuthAction";
 import { Link, useHistory } from "react-router-dom";
+import SpinnerLoading from "../helpers/Spinner";
 
 const SignIn = () => {
   const history = useHistory();
@@ -18,7 +19,7 @@ const SignIn = () => {
   });
 
   const state = useSelector((state) => state.auth);
-  const { isAuthenticated, user, error } = state;
+  const { isAuthenticated, user, error, isLoading } = state;
   const dispatch = useDispatch();
 
   const onInputChange = ({ target: { id, value } }) => {
@@ -56,17 +57,18 @@ const SignIn = () => {
   useEffect(() => {
     if (!_.isEmpty(user) && isAuthenticated) {
       localStorage.setItem("user_logged_in", JSON.stringify(user.username));
-      history.push("/");
+      history.push("/dashboard");
     }
   }, [history, isAuthenticated, user]);
 
   return (
-    <section >
-      <div className="row mt-4" >
+    <section>
+      <div className="row mt-4">
         <div className="col-sm-2 col-md-3" />
         <div className="col-sm-8 col-md-6">
           <div className="container">
             <h1>Login</h1>
+            {isLoading && <SpinnerLoading />}
             <form onSubmit={handleSubmit}>
               {error ? (
                 <small className="text-danger ml-2">{error.message}</small>

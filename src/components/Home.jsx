@@ -1,15 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
-
-import Dashboard from "./Dashboard";
-const Home = () => {
-  const state = useSelector((state) => state.auth);
-  const { isAuthenticated, user } = state;
-
-  return isAuthenticated ? (
-    <Dashboard username={user.username} />
-  ) : (
-    <div className="jumbotron container mt-4">
+import SideNav from "./SideNav";
+const Home = () => (
+  <React.Fragment>
+    <SideNav />
+    <div className="jumbotron col-md-8 container mt-4">
       <h1 className="display-3">AWS Amplify Demo</h1>
       <h5>Fastest, easiest way to build mobile and web apps that scale</h5>
       <p className="lead">
@@ -40,7 +34,7 @@ const Home = () => {
         </div>
       </div>
     </div>
-  );
-};
+  </React.Fragment>
+);
 
 export default Home;

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 
 import Routes from "./routes/Routes";
@@ -19,6 +20,7 @@ const App = () => {
       <div style={{ marginTop: 60 }}>
         <Routes />
       </div>
+      <Footer />
     </BrowserRouter>
   );
 };

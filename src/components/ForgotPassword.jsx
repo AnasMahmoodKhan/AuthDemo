@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { forgotPassword } from "../store/actions/AuthAction";
 
 import { useHistory } from "react-router-dom";
+import SpinnerLoading from "../helpers/Spinner";
 
 const ForgotPassword = () => {
   const history = useHistory();
 
   const state = useSelector((state) => state.auth);
-  const { error } = state;
+  const { error, isLoading } = state;
   const dispatch = useDispatch();
 
   const [fields, setFields] = useState({
@@ -57,6 +58,7 @@ const ForgotPassword = () => {
           <div className="container">
             <h1>Confirm Username</h1>
             <p>We will send a confirmation code on your email.</p>
+            {isLoading && <SpinnerLoading />}
             {error && (
               <small className="text-danger ml-2">{error.message}</small>
             )}

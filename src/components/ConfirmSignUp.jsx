@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import SpinnerLoading from "../helpers/Spinner";
 import { confirmcode } from "../store/actions/AuthAction";
 
 const ConfirmSignUp = () => {
   const history = useHistory();
   const state = useSelector((state) => state.auth);
-  const { isAuthenticated, error } = state;
+  const { isAuthenticated, error, isLoading } = state;
   const dispatch = useDispatch();
 
   const [code, setCode] = useState("");
@@ -56,6 +57,7 @@ const ConfirmSignUp = () => {
       <div className="col-sm-8 col-md-6">
         <h4>Check your Email</h4>
         <p>We have sent a six digit confirmation code</p>
+        {isLoading && <SpinnerLoading />}
         {error ? (
           <small className="text-danger ml-2">{error.message}</small>
         ) : null}

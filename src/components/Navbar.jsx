@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const handleSignOut = (e) => {
     dispatch(signout);
-    history.push("./signin");
+    history.push("./");
   };
 
   return (

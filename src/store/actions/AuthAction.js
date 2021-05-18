@@ -14,10 +14,12 @@ import {
   FORGOT_PASSWORD_CODE_FAIL,
   CHANGE_PASSWORD_SUCCESS,
   CHANGE_PASSWORD_FAIL,
+  EVENT_PENDING,
 } from "./types";
 
 export const signup = (data) => {
   return async (dispatch) => {
+    dispatch({ type: EVENT_PENDING });
     const { username, password, email } = data;
 
     try {
@@ -43,6 +45,8 @@ export const signup = (data) => {
 
 export const login = (data) => {
   return async (dispatch) => {
+    dispatch({ type: EVENT_PENDING });
+
     try {
       const { username, password } = data;
       const response = await Auth.signIn(username, password);
@@ -61,6 +65,7 @@ export const login = (data) => {
 
 export const confirmcode = (data) => {
   return async (dispatch) => {
+    dispatch({ type: EVENT_PENDING });
     try {
       const { username, code } = data;
       await Auth.confirmSignUp(username, code);
@@ -107,6 +112,7 @@ export const signout = async (dispatch) => {
 
 export const forgotPassword = (username) => {
   return async (dispatch) => {
+    dispatch({ type: EVENT_PENDING });
     try {
       await Auth.forgotPassword(username);
       dispatch({
@@ -124,6 +130,7 @@ export const forgotPassword = (username) => {
 
 export const changePassword = (data) => {
   return async (dispatch) => {
+    dispatch({ type: EVENT_PENDING });
     const { username, code, new_password } = data;
     try {
       const response = await Auth.forgotPasswordSubmit(

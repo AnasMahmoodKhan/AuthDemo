@@ -4,11 +4,12 @@ import { signup } from "../store/actions/AuthAction";
 import { useHistory } from "react-router-dom";
 
 import _ from "lodash";
+import SpinnerLoading from "../helpers/Spinner";
 
 const SignUp = () => {
   const history = useHistory();
   const state = useSelector((state) => state.auth);
-  const { user, error } = state;
+  const { user, error, isLoading } = state;
   const dispatch = useDispatch();
 
   const [fields, setFields] = useState({
@@ -81,6 +82,7 @@ const SignUp = () => {
         <div className="col-sm-8 col-md-6">
           <div className="container">
             <h1>Sign Up</h1>
+            {isLoading && <SpinnerLoading />}
             {error ? (
               <small className="text-danger ml-2">{error.message}</small>
             ) : null}
