@@ -76,7 +76,7 @@ const SignUp = () => {
   }, [history, user]);
 
   return (
-    <section>
+    <section style={{ height: "524px" }}>
       <div className="row">
         <div className="col-sm-2 col-md-3" />
         <div className="col-sm-8 col-md-6">

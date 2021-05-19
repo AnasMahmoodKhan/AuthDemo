@@ -52,7 +52,7 @@ const ConfirmSignUp = () => {
   }, [history, isAuthenticated]);
 
   return (
-    <div className="row mt-4 container">
+    <div className="row mt-4 container"  style={{ height: "524px" }}>
       <div className="col-sm-2 col-md-3"></div>
       <div className="col-sm-8 col-md-6">
         <h4>Check your Email</h4>

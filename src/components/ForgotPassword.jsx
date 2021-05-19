@@ -51,7 +51,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <section className="mt-4">
+    <section className="mt-4"  style={{ height: "524px" }}>
       <div className="row mt-4">
         <div className="col-sm-2 col-md-3" />
         <div className="col-sm-8 col-md-6">
