@@ -9,7 +9,7 @@ import SpinnerLoading from "../helpers/Spinner";
 
 const Tables = () => {
   const state = useSelector((state) => state.data);
-  const { table_data, isLoading } = state;
+  const { table_data, isLoading, error } = state;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const Tables = () => {
     ],
     []
   );
-
+  console.log(error);
   return (
     <>
       <SideNav />

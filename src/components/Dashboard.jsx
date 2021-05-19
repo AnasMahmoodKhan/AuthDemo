@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line, Pie } from "react-chartjs-2";
-import { data, options, optionsPie, dataPie } from "../helpers/chartData";
+import { useDispatch, useSelector } from "react-redux";
+import { data, options, optionsPie } from "../helpers/chartData";
 import ProductsContainer from "../helpers/ProductsContainer";
+import SpinnerLoading from "../helpers/Spinner";
+import { fetch_data_pie } from "../store/actions/DataAction";
 import SideNav from "./SideNav";
+
 const Dashboard = () => {
+  const [month, setmonth] = useState("May");
+  const state = useSelector((state) => state.data);
+  const { data_pie, isLoading } = state;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetch_data_pie(month));
+  }, [dispatch, month]);
+
   return (
     <>
       <SideNav />
@@ -30,36 +43,22 @@ const Dashboard = () => {
                     Export
                   </button>
                 </div>
-                <button
-                  type="button"
+                <select
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setmonth(e.target.value);
+                  }}
+                  defaultValue={"May"}
                   className="btn btn-sm btn-outline-secondary dropdown-toggle"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="feather feather-calendar"
-                  >
-                    <rect
-                      x="3"
-                      y="4"
-                      width="18"
-                      height="18"
-                      rx="2"
-                      ry="2"
-                    ></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                  </svg>
-                  This week
-                </button>
+                  {["January", "February", "March", "April", "May"].map(
+                    (pageSize) => (
+                      <option key={pageSize} value={pageSize}>
+                        Show {pageSize}
+                      </option>
+                    )
+                  )}
+                </select>
               </div>
             </div>
             <div className="row">
@@ -68,12 +67,16 @@ const Dashboard = () => {
               </div>
               <br />
               <div className="col-md-6 ">
-                <Pie
-                  data={dataPie}
-                  width={450}
-                  height={350}
-                  options={optionsPie}
-                />
+                {isLoading ? (
+                  <SpinnerLoading />
+                ) : (
+                  <Pie
+                    data={data_pie}
+                    width={450}
+                    height={350}
+                    options={optionsPie}
+                  />
+                )}
               </div>
             </div>
           </main>

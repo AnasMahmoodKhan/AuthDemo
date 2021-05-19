@@ -1,5 +1,5 @@
 import React from "react";
-import { useTable, usePagination } from "react-table";
+import { useTable, usePagination, useSortBy } from "react-table";
 
 const DataTable = ({ columns, data }) => {
   const {
@@ -22,6 +22,7 @@ const DataTable = ({ columns, data }) => {
       columns,
       data,
     },
+    useSortBy,
     usePagination
   );
   return (
@@ -121,7 +122,16 @@ const DataTable = ({ columns, data }) => {
               {...headerGroup.getHeaderGroupProps()}
             >
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <th {...column.getHeaderProps()}>
+                  {column.render("Header")}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? " 🔽"
+                        : " 🔼"
+                      : ""}
+                  </span>
+                </th>
               ))}
             </tr>
           ))}
