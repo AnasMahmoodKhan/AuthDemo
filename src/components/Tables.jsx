@@ -9,7 +9,7 @@ import SpinnerLoading from "../helpers/Spinner";
 
 const Tables = () => {
   const state = useSelector((state) => state.data);
-  const { table_data, isLoading, error } = state;
+  const { table_data, isLoading } = state;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -19,26 +19,22 @@ const Tables = () => {
   const columns = useMemo(
     () => [
       {
-        Header: "User Traffic",
-        columns: [
-          {
-            Header: "Name",
-            accessor: "name",
-          },
-          {
-            Header: "Position",
-            accessor: "position",
-          },
-          {
-            Header: "Visit Date",
-            accessor: "date",
-          },
-        ],
+        Header: "Name",
+        accessor: "name",
+      },
+      {
+        Header: "Position",
+        accessor: "position",
+      },
+      {
+        Header: "Visit Date",
+        accessor: "date",
       },
     ],
+
     []
   );
-  console.log(error);
+
   return (
     <>
       <SideNav />

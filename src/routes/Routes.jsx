@@ -11,6 +11,7 @@ import { AppliedRoute } from "./AppliedRoute";
 import Dashboard from "../components/Dashboard";
 import { useSelector } from "react-redux";
 import Tables from "../components/Tables";
+import Employees from "../components/Employees";
 
 const Routes = ({ childProps }) => {
   const state = useSelector((state) => state.auth);
@@ -24,6 +25,7 @@ const Routes = ({ childProps }) => {
       <Route component={ConfirmSignUp} path="/confirmsignup" exact />
       <Route component={SignUp} path="/signup" exact />
       <Route component={Tables} path="/report" />
+      <Route component={Employees} path="/employees" />
       {isAuthenticated ? (
         <>
           <Route component={Dashboard} path="/dashboard" exact />

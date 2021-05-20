@@ -1,0 +1,82 @@
+[
+    {
+        "id": "XY01",
+        "name": "Adam Kane",
+        "department": "Finance",
+        "designation": "Trainee",
+        "salary": 4000,
+        "gender": "Male"
+    },
+    {
+        "id": "XY02",
+        "name": "John Jones",
+        "department": "Finance",
+        "designation": "Trainee",
+        "salary": 4000,
+        "gender": "Male"
+    },
+    {
+        "id": "XY03",
+        "name": "Fiora Clare",
+        "department": "Finance",
+        "designation": "Trainee",
+        "salary": 4000,
+        "gender": "Female"
+    },
+    {
+        "id": "XY04",
+        "name": "George Lucas",
+        "department": "Finance",
+        "designation": "Trainee",
+        "salary": 5000,
+        "gender": "Male"
+    },
+    {
+        "id": "XY05",
+        "name": "Norah Smith",
+        "department": "Finance",
+        "designation": "Trainee",
+        "salary": 5000,
+        "gender": "Female"
+    },
+    {
+        "id": "XY06",
+        "name": "Dinesh",
+        "department": "Operations",
+        "designation": "Junior Manager",
+        "salary": 25000,
+        "gender": "Male"
+    },
+    {
+        "id": "XY07",
+        "name": "Vijay Sharma",
+        "department": "Operations",
+        "designation": "Junior Manager",
+        "salary": 25000,
+        "gender": "Male"
+    },
+    {
+        "id": "XY08",
+        "name": "Smita Patel",
+        "department": "Operations",
+        "designation": "Junior Manager",
+        "salary": 24000,
+        "gender": "Male"
+    },
+    {
+        "id": "XY09",
+        "name": "Kiran Kher",
+        "department": "Operations",
+        "designation": "Junior Manager",
+        "salary": 30000,
+        "gender": "Male"
+    },
+    {
+        "id": "XY10",
+        "name": "Laurel",
+        "department": "Operations",
+        "designation": "Junior Manager",
+        "salary": 27000,
+        "gender": "Male"
+    }
+]

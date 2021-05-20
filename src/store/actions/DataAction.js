@@ -1,10 +1,16 @@
 import Api from "../api/Api";
 import {
+  ADD_EMPLOYEE_DETAILS,
+  ADD_EMPLOYEE_DETAILS_FAIL,
+  DELETE_EMPLOYEES,
+  DELETE_EMPLOYEES_FAIL,
   EVENT_PENDING,
   FETCH_DATA_PIE,
   FETCH_DATA_PIE_FAIL,
   FETCH_DATA_TABLE,
   FETCH_DATA_TABLE_FAIL,
+  FETCH_EMPLOYEE_LIST,
+  FETCH_EMPLOYEE_LIST_FAIL,
 } from "./types";
 
 export const fetch_data_table = async (dispatch) => {
@@ -62,6 +68,68 @@ export const fetch_data_pie = (month) => {
     } catch (error) {
       dispatch({
         type: FETCH_DATA_PIE_FAIL,
+        error: error,
+      });
+    }
+  };
+};
+
+export const fetch_employee_list = async (dispatch) => {
+  dispatch({
+    type: EVENT_PENDING,
+  });
+
+  try {
+    const response = await Api.fetch("fetchemployees");
+
+    dispatch({
+      type: FETCH_EMPLOYEE_LIST,
+      payload: response.data,
+    });
+  } catch (error) {
+    dispatch({
+      type: FETCH_EMPLOYEE_LIST_FAIL,
+      error: error,
+    });
+  }
+};
+
+export const add_employee_details = (data) => {
+  return async (dispatch) => {
+    dispatch({
+      type: EVENT_PENDING,
+    });
+
+    try {
+      await Api.post("addemployee", data);
+
+      dispatch({
+        type: ADD_EMPLOYEE_DETAILS,
+      });
+    } catch (error) {
+      dispatch({
+        type: ADD_EMPLOYEE_DETAILS_FAIL,
+        error: error,
+      });
+    }
+  };
+};
+
+export const delete_employees = (data) => {
+  return async (dispatch) => {
+    dispatch({
+      type: EVENT_PENDING,
+    });
+
+    try {
+      await Api.delete("deleteEmployee", data);
+
+      dispatch({
+        type: DELETE_EMPLOYEES,
+      });
+    } catch (error) {
+      dispatch({
+        type: DELETE_EMPLOYEES_FAIL,
         error: error,
       });
     }

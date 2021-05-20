@@ -1,12 +1,75 @@
-import React from "react";
-import { useTable, usePagination, useSortBy } from "react-table";
+import _ from "lodash";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
+import {
+  useTable,
+  usePagination,
+  useSortBy,
+  useGlobalFilter,
+  useRowSelect,
+} from "react-table";
 
-const DataTable = ({ columns, data }) => {
+export const IndeterminateCheckbox = forwardRef(
+  ({ indeterminate, ...rest }, ref) => {
+    const defaultRef = useRef();
+    const resolvedRef = ref || defaultRef;
+
+    useEffect(() => {
+      resolvedRef.current.indeterminate = indeterminate;
+    }, [resolvedRef, indeterminate]);
+
+    return (
+      <>
+        <input type="checkbox" ref={resolvedRef} {...rest} />
+      </>
+    );
+  }
+);
+
+const DataTable = ({ columns, data, deleteIds }) => {
+  function GlobalFilter({
+    preGlobalFilteredRows,
+    globalFilter,
+    setGlobalFilter,
+  }) {
+    const count = preGlobalFilteredRows.length;
+    const [value, setValue] = useState(globalFilter);
+    const onSubmit = () => {
+      setGlobalFilter(value || undefined);
+    };
+
+    return (
+      <span>
+        <form onSubmit={onSubmit}>
+          <div class="form-group row">
+            <label htmlFor="search" class="col text-right col-form-label">
+              Search :
+            </label>
+
+            <div class="col-8">
+              <input
+                className="form-control"
+                value={value || ""}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                }}
+                placeholder={`${count} records...`}
+                style={{
+                  fontSize: "1rem",
+                }}
+              />
+            </div>
+          </div>
+        </form>
+      </span>
+    );
+  }
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     page,
+    selectedFlatRows,
     prepareRow,
     canPreviousPage,
     canNextPage,
@@ -16,21 +79,77 @@ const DataTable = ({ columns, data }) => {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, selectedRowIds },
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    globalFilter,
   } = useTable(
     {
       columns,
       data,
     },
+
+    useGlobalFilter,
     useSortBy,
-    usePagination
+    usePagination,
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => [
+        {
+          id: "selection",
+
+          Header: ({ getToggleAllRowsSelectedProps }) => (
+            <div>
+              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+            </div>
+          ),
+
+          Cell: ({ row }) => (
+            <div>
+              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+            </div>
+          ),
+        },
+        ...columns,
+      ]);
+    }
   );
+  const [deleteButton, setdeleteButton] = useState(false);
+  useEffect(() => {
+    if (!_.isEmpty(selectedRowIds)) {
+      setdeleteButton(true);
+    } else {
+      setdeleteButton(false);
+    }
+  }, [selectedRowIds]);
+
+  const handleDelete = () => {
+    let delete_rows_id = selectedFlatRows.map((item) => item.original.id);
+    deleteIds(delete_rows_id);
+  };
   return (
     <>
-      <div className="container-fluid">
+      <div className="container">
         <div className="row">
+          <div className="col-md-4">
+            <GlobalFilter
+              preGlobalFilteredRows={preGlobalFilteredRows}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
+          </div>
           <div className="col-md-3">
-            <ul className="pagination justify-content-center">
+            <ul className="pagination ">
+              <li>
+                <button
+                  className={`btn btn-danger ${
+                    !deleteButton && "disabled"
+                  }  mr-4`}
+                  onClick={handleDelete}
+                >
+                  Delete
+                </button>
+              </li>
               <li className={`page-item ${!canPreviousPage && "disabled"}`}>
                 <button
                   className={`page-link`}
@@ -70,11 +189,11 @@ const DataTable = ({ columns, data }) => {
               </li>
             </ul>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-3">
             {" "}
             <form className="form-inline justify-content-center">
               <div className="form-group">
-                <label for="inputPassword6">
+                <label htmlFor="Page">
                   {" "}
                   Page : {pageIndex + 1} of {pageOptions.length} | Go To Page
                 </label>
@@ -95,7 +214,7 @@ const DataTable = ({ columns, data }) => {
             </form>
           </div>
 
-          <div className="col-md-3">
+          <div className="col-md-2">
             {" "}
             <select
               className="form-control"
@@ -122,14 +241,52 @@ const DataTable = ({ columns, data }) => {
               {...headerGroup.getHeaderGroupProps()}
             >
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render("Header")}
                   <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? " 🔽"
-                        : " 🔼"
-                      : ""}
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <>
+                          &nbsp;{" "}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="feather feather-arrow-down"
+                          >
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <polyline points="19 12 12 19 5 12" />
+                          </svg>
+                        </>
+                      ) : (
+                        <>
+                          &nbsp;{" "}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="feather feather-arrow-up"
+                          >
+                            <line x1="12" y1="19" x2="12" y2="5" />
+                            <polyline points="5 12 12 5 19 12" />
+                          </svg>
+                        </>
+                      )
+                    ) : (
+                      ""
+                    )}
                   </span>
                 </th>
               ))}
