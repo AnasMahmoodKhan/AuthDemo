@@ -1,11 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SpinnerLoading from "../helpers/Spinner";
-import { add_employee_details } from "../store/actions/DataAction";
+import {
+  add_employee_details,
+  edit_employee_details,
+  fetch_employee_detail,
+} from "../store/actions/DataAction";
 
-const EmployeeForm = ({ setAddEmployee }) => {
+const EmployeeForm = ({
+  setAddEmployee,
+  editting,
+  setEditEmployee,
+  edit_id,
+}) => {
   const state = useSelector((state) => state.data);
-  const { error, isLoading, employee_added } = state;
+  const {
+    error,
+    isLoading,
+    employee_added,
+    editting_employee,
+    employee_edited,
+  } = state;
   const dispatch = useDispatch();
   const [fields, setFields] = useState({
     name: "",
@@ -79,19 +94,49 @@ const EmployeeForm = ({ setAddEmployee }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      dispatch(add_employee_details(fields));
+      if (editting) {
+        dispatch(edit_employee_details(edit_id, fields));
+      } else {
+        dispatch(add_employee_details(fields));
+      }
     }
   };
 
   useEffect(() => {
+    if (editting) {
+      dispatch(fetch_employee_detail(edit_id));
+    }
+  }, [dispatch, edit_id, editting]);
+
+  useEffect(() => {
     if (employee_added) {
+      alert(`Details added Successfully.`);
       setAddEmployee(false);
     }
-  }, [employee_added, error, setAddEmployee]);
+    if (employee_edited) {
+      alert(`Editted ${edit_id} Successfully.`);
+      setEditEmployee(false);
+    }
+  }, [
+    edit_id,
+    employee_added,
+    employee_edited,
+    setAddEmployee,
+    setEditEmployee,
+  ]);
+
+  useEffect(() => {
+    setFields(editting_employee);
+  }, [editting_employee]);
+
   return (
     <div className="col-md-9 ml-sm-auto col-lg-10 px-md-4 border-left">
       <div className="p-2 bg-light border text-center">
-        <h3>Add new employee details</h3>
+        {editting ? (
+          <h3>Edit Employee Details</h3>
+        ) : (
+          <h3>Add new employee details</h3>
+        )}
       </div>
       {isLoading && <SpinnerLoading />}
       {error ? (
@@ -109,6 +154,8 @@ const EmployeeForm = ({ setAddEmployee }) => {
             <input
               type="text"
               id="id"
+              disabled={editting}
+              defaultValue={fields.id}
               onChange={onInputChange}
               className={`form-control ${fieldsError.id ? "is-invalid" : ""}`}
             />
@@ -124,6 +171,7 @@ const EmployeeForm = ({ setAddEmployee }) => {
             <input
               type="text"
               id="name"
+              defaultValue={fields.name}
               onChange={onInputChange}
               className={`form-control ${fieldsError.name ? "is-invalid" : ""}`}
             />
@@ -142,6 +190,7 @@ const EmployeeForm = ({ setAddEmployee }) => {
                 <select
                   id="department"
                   onChange={onInputChange}
+                  value={fields.department}
                   className={`form-control ${
                     fieldsError.department ? "is-invalid" : ""
                   }`}
@@ -166,6 +215,7 @@ const EmployeeForm = ({ setAddEmployee }) => {
                 </label>
                 <select
                   id="designation"
+                  value={fields.designation}
                   onChange={onInputChange}
                   className={`form-control ${
                     fieldsError.designation ? "is-invalid" : ""
@@ -194,6 +244,7 @@ const EmployeeForm = ({ setAddEmployee }) => {
             <input
               type="number"
               id="salary"
+              defaultValue={fields.salary}
               onChange={onInputChange}
               className={`form-control ${
                 fieldsError.salary ? "is-invalid" : ""
@@ -235,7 +286,11 @@ const EmployeeForm = ({ setAddEmployee }) => {
             <small className="text-danger">{fieldsError.gender}</small>
           )}
           <div className="form-group text-center">
-            <button className="btn btn-success mr-2">Save</button>
+            {editting ? (
+              <button className="btn btn-success mr-2">Save Changes</button>
+            ) : (
+              <button className="btn btn-success mr-2">Save</button>
+            )}
           </div>
         </form>
       </div>

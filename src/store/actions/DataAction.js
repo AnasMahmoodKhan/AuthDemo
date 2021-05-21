@@ -4,11 +4,17 @@ import {
   ADD_EMPLOYEE_DETAILS_FAIL,
   DELETE_EMPLOYEES,
   DELETE_EMPLOYEES_FAIL,
+  DELETE_REPORTS,
+  DELETE_REPORTS_FAIL,
+  EDIT_EMPLOYEE_DETAILS,
+  EDIT_EMPLOYEE_DETAILS_FAIL,
   EVENT_PENDING,
   FETCH_DATA_PIE,
   FETCH_DATA_PIE_FAIL,
   FETCH_DATA_TABLE,
   FETCH_DATA_TABLE_FAIL,
+  FETCH_EMPLOYEE_DETAIL,
+  FETCH_EMPLOYEE_DETAIL_FAIL,
   FETCH_EMPLOYEE_LIST,
   FETCH_EMPLOYEE_LIST_FAIL,
 } from "./types";
@@ -130,6 +136,70 @@ export const delete_employees = (data) => {
     } catch (error) {
       dispatch({
         type: DELETE_EMPLOYEES_FAIL,
+        error: error,
+      });
+    }
+  };
+};
+
+export const fetch_employee_detail = (data) => {
+  return async (dispatch) => {
+    dispatch({
+      type: EVENT_PENDING,
+    });
+
+    try {
+      const response = await Api.fetch(`getemployee/${data}`);
+
+      dispatch({
+        type: FETCH_EMPLOYEE_DETAIL,
+        payload: response.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: FETCH_EMPLOYEE_DETAIL_FAIL,
+        error: error,
+      });
+    }
+  };
+};
+
+export const edit_employee_details = (id, data) => {
+  return async (dispatch) => {
+    dispatch({
+      type: EVENT_PENDING,
+    });
+
+    try {
+      await Api.put(`editemployee/${id}`, data);
+
+      dispatch({
+        type: EDIT_EMPLOYEE_DETAILS,
+      });
+    } catch (error) {
+      dispatch({
+        type: EDIT_EMPLOYEE_DETAILS_FAIL,
+        error: error,
+      });
+    }
+  };
+};
+
+export const delete_reports = (data) => {
+  return async (dispatch) => {
+    dispatch({
+      type: EVENT_PENDING,
+    });
+
+    try {
+      await Api.delete("deleteReports", data);
+
+      dispatch({
+        type: DELETE_REPORTS,
+      });
+    } catch (error) {
+      dispatch({
+        type: DELETE_REPORTS_FAIL,
         error: error,
       });
     }

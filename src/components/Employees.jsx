@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SpinnerLoading from "../helpers/Spinner";
@@ -11,6 +12,8 @@ import DataTable from "./table";
 
 const Employees = () => {
   const [AddEmployee, setAddEmployee] = useState(false);
+  const [EditEmployee, setEditEmployee] = useState(false);
+  const [EditId, setEditId] = useState("");
   const [deleteEvent, setdeleteEvent] = useState(false);
 
   const state = useSelector((state) => state.data);
@@ -18,6 +21,10 @@ const Employees = () => {
   const dispatch = useDispatch();
   const columns = useMemo(
     () => [
+      {
+        Header: "ID",
+        accessor: "id",
+      },
       {
         Header: "Name",
         accessor: "name",
@@ -53,6 +60,12 @@ const Employees = () => {
     dispatch(fetch_employee_list);
   };
 
+  const handleSaveEdit = (bool) => {
+    setEditEmployee(bool);
+    setEditId("");
+    dispatch(fetch_employee_list);
+  };
+
   const delete_rows = (ids) => {
     if (window.confirm("Are you sure you wish to delete this item?")) {
       dispatch(delete_employees(ids));
@@ -61,11 +74,25 @@ const Employees = () => {
     }
   };
 
+  const edit_row = (id) => {
+    if (!_.isEmpty(id)) {
+      console.log(id);
+      setEditEmployee(true);
+      setEditId(id);
+    }
+  };
+
   return (
     <>
       <SideNav />
       {AddEmployee ? (
         <EmployeeForm setAddEmployee={(bool) => handleSave(bool)} />
+      ) : EditEmployee ? (
+        <EmployeeForm
+          editting={true}
+          edit_id={EditId}
+          setEditEmployee={(bool) => handleSaveEdit(bool)}
+        />
       ) : (
         <div className="container-fluid">
           <div className="row">
@@ -94,6 +121,7 @@ const Employees = () => {
                   columns={columns}
                   data={employee_list}
                   deleteIds={delete_rows}
+                  editId={edit_row}
                 />
               )}
             </main>

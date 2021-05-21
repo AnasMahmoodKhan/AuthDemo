@@ -9,6 +9,9 @@ const Api = {
   post: (path, data) => {
     return axios.post(`${API_END_POINT}/${path}`, data);
   },
+  put: (path, data) => {
+    return axios.put(`${API_END_POINT}/${path}`, data);
+  },
   delete: (path, data) => {
     return axios.delete(`${API_END_POINT}/${path}?ids=${data}`);
   },

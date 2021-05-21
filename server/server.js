@@ -11,7 +11,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-const data_table = require("./TableDataReport");
+let data_table = require("./TableDataReport");
 const pie_data = require("./PieChartData.json");
 let employees = require("./Employees.json");
 
@@ -77,4 +77,12 @@ app.delete("/deleteEmployee?", function (req, res) {
 
   employees = employees_updated;
   res.status(200).send("Employee details deleted successfully");
+});
+
+app.delete("/deleteReports?", function (req, res) {
+  let ind = req.query.ids;
+  let data_table_updated = data_table.filter((item) => !ind.includes(item.id));
+
+  data_table = data_table_updated;
+  res.status(200).send("Reports deleted successfully");
 });

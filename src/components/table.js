@@ -25,7 +25,7 @@ export const IndeterminateCheckbox = forwardRef(
   }
 );
 
-const DataTable = ({ columns, data, deleteIds }) => {
+const DataTable = ({ columns, data, deleteIds, editId, hideEdit }) => {
   function GlobalFilter({
     preGlobalFilteredRows,
     globalFilter,
@@ -127,6 +127,9 @@ const DataTable = ({ columns, data, deleteIds }) => {
     let delete_rows_id = selectedFlatRows.map((item) => item.original.id);
     deleteIds(delete_rows_id);
   };
+  const handleClick = (obj) => {
+    editId(obj.id);
+  };
   return (
     <>
       <div className="container">
@@ -140,16 +143,19 @@ const DataTable = ({ columns, data, deleteIds }) => {
           </div>
           <div className="col-md-3">
             <ul className="pagination ">
-              <li>
-                <button
-                  className={`btn btn-danger ${
-                    !deleteButton && "disabled"
-                  }  mr-4`}
-                  onClick={handleDelete}
-                >
-                  Delete
-                </button>
-              </li>
+              {!hideEdit && (
+                <li>
+                  <button
+                    className={`btn btn-danger ${
+                      !deleteButton && "disabled"
+                    }  mr-4`}
+                    onClick={handleDelete}
+                    disabled={!deleteButton}
+                  >
+                    Delete
+                  </button>
+                </li>
+              )}
               <li className={`page-item ${!canPreviousPage && "disabled"}`}>
                 <button
                   className={`page-link`}
@@ -290,6 +296,7 @@ const DataTable = ({ columns, data, deleteIds }) => {
                   </span>
                 </th>
               ))}
+              {!hideEdit && <th>Action</th>}
             </tr>
           ))}
         </thead>
@@ -303,6 +310,14 @@ const DataTable = ({ columns, data, deleteIds }) => {
                     <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                   );
                 })}
+                {!hideEdit && (
+                  <button
+                    className="btn btn-sm btn-secondary mt-2"
+                    onClick={() => handleClick({ ...row.values })}
+                  >
+                    Edit
+                  </button>
+                )}
               </tr>
             );
           })}

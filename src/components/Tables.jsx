@@ -1,20 +1,22 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import SideNav from "./SideNav";
 
 import DataTable from "./table";
 import { useDispatch, useSelector } from "react-redux";
-import { fetch_data_table } from "../store/actions/DataAction";
+import { delete_reports, fetch_data_table } from "../store/actions/DataAction";
 import SpinnerLoading from "../helpers/Spinner";
 
 const Tables = () => {
+  const [deleteEvent, setdeleteEvent] = useState(false);
   const state = useSelector((state) => state.data);
   const { table_data, isLoading } = state;
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetch_data_table);
-  }, [dispatch]);
+    setdeleteEvent(false);
+  }, [dispatch, deleteEvent]);
 
   const columns = useMemo(
     () => [
@@ -34,6 +36,13 @@ const Tables = () => {
 
     []
   );
+  const delete_rows = (ids) => {
+    if (window.confirm("Are you sure you wish to delete this item?")) {
+      dispatch(delete_reports(ids));
+      alert("Delete Successs");
+      setdeleteEvent(true);
+    }
+  };
 
   return (
     <>
@@ -66,7 +75,12 @@ const Tables = () => {
             {isLoading ? (
               <SpinnerLoading />
             ) : (
-              <DataTable columns={columns} data={table_data} />
+              <DataTable
+                columns={columns}
+                hideEdit={true}
+                deleteIds={delete_rows}
+                data={table_data}
+              />
             )}
           </main>
         </div>
