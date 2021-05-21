@@ -81,7 +81,9 @@ app.delete("/deleteEmployee?", function (req, res) {
 
 app.delete("/deleteReports?", function (req, res) {
   let ind = req.query.ids;
-  let data_table_updated = data_table.filter((item) => !ind.includes(item.id));
+  let data_table_updated = data_table.filter(
+    (item) => !ind.includes(item.name)
+  );
 
   data_table = data_table_updated;
   res.status(200).send("Reports deleted successfully");

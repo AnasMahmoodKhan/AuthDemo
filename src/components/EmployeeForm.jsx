@@ -13,6 +13,14 @@ const EmployeeForm = ({
   setEditEmployee,
   edit_id,
 }) => {
+  const [fields, setFields] = useState({
+    name: "",
+    id: "",
+    department: "",
+    designation: "",
+    salary: "",
+    gender: "",
+  });
   const state = useSelector((state) => state.data);
   const {
     error,
@@ -22,14 +30,8 @@ const EmployeeForm = ({
     employee_edited,
   } = state;
   const dispatch = useDispatch();
-  const [fields, setFields] = useState({
-    name: "",
-    id: "",
-    department: "",
-    designation: "",
-    salary: "",
-    gender: "",
-  });
+  const [formValid, setformValid] = useState(false);
+
   const [fieldsError, setFieldsError] = useState({
     name: "",
     id: "",
@@ -39,8 +41,13 @@ const EmployeeForm = ({
     gender: "",
   });
 
+  useEffect(() => {
+    if (editting) setFields(editting_employee);
+  }, [editting, editting_employee]);
+
   const validateForm = () => {
     let isValid = true;
+
     let fieldsError = {
       name: "",
       id: "",
@@ -49,37 +56,43 @@ const EmployeeForm = ({
       salary: "",
       gender: "",
     };
-
+    console.log(fields);
     if (fields.id === "") {
       fieldsError.id = "Please enter valid Employee ID";
       isValid = false;
+      console.log(isValid);
     }
 
     if (fields.name === "") {
       fieldsError.name = "Please enter a Name";
       isValid = false;
+      console.log(isValid);
     }
 
     if (fields.department === "") {
       fieldsError.department = "Please select a Department";
       isValid = false;
+      console.log(isValid);
     }
 
     if (fields.designation === "") {
       fieldsError.designation = "Please Select a Designation";
       isValid = false;
+      console.log(isValid);
     }
 
     if (fields.salary === "") {
       fieldsError.salary = "Please enter salary";
       isValid = false;
+      console.log(isValid);
     }
 
     if (fields.gender === "") {
       fieldsError.gender = "Please select a gender";
       isValid = false;
+      console.log(isValid);
     }
-
+    console.log(isValid);
     setFieldsError(fieldsError);
     return isValid;
   };
@@ -89,18 +102,26 @@ const EmployeeForm = ({
       ...fields,
       [id]: value,
     });
+    fieldsError[id] = "";
+    setFieldsError(fieldsError);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setformValid(true);
+    }
+  };
+
+  useEffect(() => {
+    if (formValid) {
       if (editting) {
         dispatch(edit_employee_details(edit_id, fields));
       } else {
         dispatch(add_employee_details(fields));
       }
     }
-  };
+  }, [dispatch, edit_id, editting, fields, formValid]);
 
   useEffect(() => {
     if (editting) {
@@ -124,10 +145,6 @@ const EmployeeForm = ({
     setAddEmployee,
     setEditEmployee,
   ]);
-
-  useEffect(() => {
-    setFields(editting_employee);
-  }, [editting_employee]);
 
   return (
     <div className="col-md-9 ml-sm-auto col-lg-10 px-md-4 border-left">
@@ -155,7 +172,7 @@ const EmployeeForm = ({
               type="text"
               id="id"
               disabled={editting}
-              defaultValue={fields.id}
+              value={fields.id}
               onChange={onInputChange}
               className={`form-control ${fieldsError.id ? "is-invalid" : ""}`}
             />
@@ -171,7 +188,7 @@ const EmployeeForm = ({
             <input
               type="text"
               id="name"
-              defaultValue={fields.name}
+              value={fields.name}
               onChange={onInputChange}
               className={`form-control ${fieldsError.name ? "is-invalid" : ""}`}
             />
@@ -244,7 +261,7 @@ const EmployeeForm = ({
             <input
               type="number"
               id="salary"
-              defaultValue={fields.salary}
+              value={fields.salary}
               onChange={onInputChange}
               className={`form-control ${
                 fieldsError.salary ? "is-invalid" : ""

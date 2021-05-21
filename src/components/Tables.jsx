@@ -36,9 +36,9 @@ const Tables = () => {
 
     []
   );
-  const delete_rows = (ids) => {
+  const delete_rows = (reports) => {
     if (window.confirm("Are you sure you wish to delete this item?")) {
-      dispatch(delete_reports(ids));
+      dispatch(delete_reports(reports));
       alert("Delete Successs");
       setdeleteEvent(true);
     }

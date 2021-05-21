@@ -125,6 +125,9 @@ const DataTable = ({ columns, data, deleteIds, editId, hideEdit }) => {
 
   const handleDelete = () => {
     let delete_rows_id = selectedFlatRows.map((item) => item.original.id);
+    if (hideEdit) {
+      delete_rows_id = selectedFlatRows.map((item) => item.original.name);
+    }
     deleteIds(delete_rows_id);
   };
   const handleClick = (obj) => {
@@ -143,19 +146,18 @@ const DataTable = ({ columns, data, deleteIds, editId, hideEdit }) => {
           </div>
           <div className="col-md-3">
             <ul className="pagination ">
-              {!hideEdit && (
-                <li>
-                  <button
-                    className={`btn btn-danger ${
-                      !deleteButton && "disabled"
-                    }  mr-4`}
-                    onClick={handleDelete}
-                    disabled={!deleteButton}
-                  >
-                    Delete
-                  </button>
-                </li>
-              )}
+              <li>
+                <button
+                  className={`btn btn-danger ${
+                    !deleteButton && "disabled"
+                  }  mr-4`}
+                  onClick={handleDelete}
+                  disabled={!deleteButton}
+                >
+                  Delete
+                </button>
+              </li>
+
               <li className={`page-item ${!canPreviousPage && "disabled"}`}>
                 <button
                   className={`page-link`}
