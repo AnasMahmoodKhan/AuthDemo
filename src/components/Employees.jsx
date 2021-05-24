@@ -1,6 +1,7 @@
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import SpinnerLoading from "../helpers/Spinner";
 import {
   delete_employees,
@@ -11,10 +12,10 @@ import SideNav from "./SideNav";
 import DataTable from "./table";
 
 const Employees = () => {
-  const [AddEmployee, setAddEmployee] = useState(false);
-  const [EditEmployee, setEditEmployee] = useState(false);
-  const [EditId, setEditId] = useState("");
-  const [deleteEvent, setdeleteEvent] = useState(false);
+  const [AddEmployee, setAddEmployee] = React.useState(false);
+  const [EditEmployee, setEditEmployee] = React.useState(false);
+  const [EditId, setEditId] = React.useState("");
+  const [deleteEvent, setdeleteEvent] = React.useState(false);
 
   const state = useSelector((state) => state.data);
   const { employee_list, isLoading } = state;
@@ -67,16 +68,16 @@ const Employees = () => {
   };
 
   const delete_rows = (ids) => {
+    // <ModalContainer isOpen={true} text={"delete"} buttonLabel={"xyz"} />;
+
     if (window.confirm("Are you sure you wish to delete this item?")) {
       dispatch(delete_employees(ids));
-      alert("Delete Successs");
       setdeleteEvent(true);
     }
   };
 
   const edit_row = (id) => {
     if (!_.isEmpty(id)) {
-      console.log(id);
       setEditEmployee(true);
       setEditId(id);
     }
@@ -86,18 +87,22 @@ const Employees = () => {
     <>
       <SideNav />
       {AddEmployee ? (
-        <EmployeeForm setAddEmployee={(bool) => handleSave(bool)} />
+        <EmployeeForm
+          setAddEmployee={(bool) => handleSave(bool)}
+          data-test="AddEmployeeForm"
+        />
       ) : EditEmployee ? (
         <EmployeeForm
           editting={true}
           edit_id={EditId}
+          data-test="EditEmployeeForm"
           setEditEmployee={(bool) => handleSaveEdit(bool)}
         />
       ) : (
-        <div className="container-fluid">
+        <div className="container-fluid" data-test="Employee">
           <div className="row">
             <main
-              id="reports"
+              id="employees"
               className="col-md-9 ml-sm-auto col-lg-10 px-md-4 border-left"
             >
               <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -115,9 +120,12 @@ const Employees = () => {
                 </div>
               </div>
               {isLoading ? (
-                <SpinnerLoading />
+                <span data-test="Spinner">
+                  <SpinnerLoading />
+                </span>
               ) : (
                 <DataTable
+                  data-test="dataTable"
                   columns={columns}
                   data={employee_list}
                   deleteIds={delete_rows}
